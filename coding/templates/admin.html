@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Админ-панель — Перекрёсток эпох</title>
+    <style>
+        :root { --dark: #1a1a1a; --gold: #c8a96e; --brown: #8b7355; --panel: #f5f0e8; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Georgia', 'Times New Roman', serif;
+            background: var(--dark);
+            color: #333;
+            min-height: 100vh;
+        }
+        .header {
+            background: var(--dark);
+            padding: 18px 30px;
+            text-align: center;
+            border-bottom: 1px solid rgba(200, 169, 110, 0.2);
+            position: relative;
+        }
+        .header h1 {
+            color: var(--gold);
+            font-size: 24px;
+            letter-spacing: 8px;
+            font-weight: normal;
+            text-transform: uppercase;
+        }
+        .back-link {
+            position: absolute;
+            left: 30px; top: 50%;
+            transform: translateY(-50%);
+            color: var(--gold);
+            text-decoration: none;
+            font-size: 14px;
+            letter-spacing: 2px;
+            border: 1px solid rgba(200, 169, 110, 0.3);
+            padding: 8px 16px;
+            transition: all 0.3s;
+        }
+        .back-link:hover { border-color: var(--gold); }
+        .container { max-width: 600px; margin: 40px auto; padding: 0 20px; }
+        .section {
+            background: var(--panel);
+            border: 1px solid rgba(139, 115, 85, 0.3);
+            padding: 25px;
+            margin-bottom: 25px;
+        }
+        .section h2 {
+            font-size: 14px;
+            letter-spacing: 4px;
+            color: var(--brown);
+            text-transform: uppercase;
+            margin-bottom: 20px;
+            font-weight: normal;
+            text-align: center;
+        }
+        .form-group { margin-bottom: 14px; }
+        label {
+            display: block;
+            font-size: 11px;
+            letter-spacing: 2px;
+            color: var(--brown);
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+        input, textarea, select {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid rgba(139, 115, 85, 0.3);
+            font-family: 'Georgia', serif;
+            font-size: 14px;
+            background: #fff;
+            color: #333;
+        }
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: var(--gold);
+        }
+        textarea { min-height: 80px; resize: vertical; }
+        button {
+            width: 100%;
+            padding: 12px;
+            background: var(--dark);
+            color: var(--gold);
+            border: 1px solid var(--gold);
+            font-family: 'Georgia', serif;
+            font-size: 14px;
+            letter-spacing: 3px;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: all 0.3s;
+        }
+        button:hover { background: rgba(200, 169, 110, 0.1); }
+        .success {
+            background: #2ecc71;
+            color: #fff;
+            padding: 12px;
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 13px;
+            letter-spacing: 1px;
+            display: none;
+        }
+        .success.show { display: block; }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <a href="/" class="back-link">на главную</a>
+        <h1>администрирование</h1>
+    </header>
+
+    <div class="container">
+        <!-- Загрузка файла -->
+        <div class="section">
+            <h2>загрузить файл</h2>
+            <div class="success" id="uploadSuccess">Файл загружен</div>
+            <form id="uploadForm" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label>Выберите файл</label>
+                    <input type="file" name="file" required>
+                </div>
+                <div class="form-group">
+                    <label>Папка</label>
+                    <select name="folder">
+                        <option value="photos/modern">photos/modern</option>
+                        <option value="photos/historical">photos/historical</option>
+                        <option value="audio">audio</option>
+                        <option value="thumbnails">thumbnails</option>
+                    </select>
+                </div>
+                <button type="submit">загрузить</button>
+            </form>
+        </div>
+
+        <!-- Создание экскурсии -->
+        <div class="section">
+            <h2>создать экскурсию</h2>
+            <div class="success" id="excursionSuccess">Экскурсия создана</div>
+            <form id="excursionForm">
+                <div class="form-group"><label>Название</label><input type="text" name="name" required></div>
+                <div class="form-group"><label>Описание</label><textarea name="description"></textarea></div>
+                <div class="form-group"><label>Длительность</label><input type="text" name="duration" placeholder="2 часа"></div>
+                <div class="form-group"><label>Протяжённость</label><input type="text" name="distance" placeholder="3 км"></div>
+                <button type="submit">создать</button>
+            </form>
+        </div>
+
+        <!-- Создание локации -->
+        <div class="section">
+            <h2>создать локацию</h2>
+            <div class="success" id="locationSuccess">Локация создана</div>
+            <form id="locationForm">
+                <div class="form-group"><label>Название</label><input type="text" name="name" required></div>
+                <div class="form-group"><label>Широта (lat)</label><input type="text" name="lat" required placeholder="56.0105"></div>
+                <div class="form-group"><label>Долгота (lng)</label><input type="text" name="lng" required placeholder="92.8525"></div>
+                <div class="form-group"><label>Адрес</label><input type="text" name="address"></div>
+                <div class="form-group"><label>Путь к историческому фото</label><input type="text" name="historical_photo" placeholder="photos/historical/name_old.jpg"></div>
+                <div class="form-group"><label>Путь к современному фото</label><input type="text" name="modern_photo" placeholder="photos/modern/name_new.jpg"></div>
+                <div class="form-group"><label>Путь к аудио</label><input type="text" name="audio_file" placeholder="audio/name.mp3"></div>
+                <div class="form-group"><label>Описание</label><textarea name="description"></textarea></div>
+                <div class="form-group"><label>Год</label><input type="text" name="year"></div>
+                <div class="form-group"><label>Теги</label><input type="text" name="tags" placeholder="через запятую"></div>
+                <div class="form-group"><label>Миниатюра</label><input type="text" name="thumbnail" placeholder="thumbnails/name.jpg"></div>
+                <button type="submit">создать</button>
+            </form>
+        </div>
+
+        <!-- Добавление локации в экскурсию -->
+        <div class="section">
+            <h2>добавить локацию в экскурсию</h2>
+            <div class="success" id="linkSuccess">Локация добавлена</div>
+            <form id="linkForm">
+                <div class="form-group"><label>Экскурсия</label><select name="excursion_id" id="excursionSelect" required><option value="">выберите...</option></select></div>
+                <div class="form-group"><label>Локация</label><select name="location_id" id="locationSelect" required><option value="">выберите...</option></select></div>
+                <div class="form-group"><label>Порядковый номер</label><input type="number" name="order_num" min="1" value="1"></div>
+                <button type="submit">добавить</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        async function loadSelects() {
+            const [exRes, locRes] = await Promise.all([fetch('/api/excursions'), fetch('/api/locations')]);
+            const excursions = await exRes.json();
+            const locations = await locRes.json();
+            const exSelect = document.getElementById('excursionSelect');
+            excursions.forEach(e => { exSelect.innerHTML += `<option value="${e.id}">${e.name}</option>`; });
+            const locSelect = document.getElementById('locationSelect');
+            locations.forEach(l => { locSelect.innerHTML += `<option value="${l.id}">${l.name}</option>`; });
+        }
+
+        document.getElementById('uploadForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            const res = await fetch('/api/upload', { method: 'POST', body: formData });
+            if (res.ok) {
+                const data = await res.json();
+                document.getElementById('uploadSuccess').textContent = `Файл загружен: ${data.path}`;
+                document.getElementById('uploadSuccess').classList.add('show');
+                setTimeout(() => document.getElementById('uploadSuccess').classList.remove('show'), 3000);
+                this.reset();
+            }
+        });
+
+        document.getElementById('excursionForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const data = Object.fromEntries(new FormData(this));
+            const res = await fetch('/api/excursions', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(data) });
+            if (res.ok) {
+                document.getElementById('excursionSuccess').classList.add('show');
+                setTimeout(() => document.getElementById('excursionSuccess').classList.remove('show'), 3000);
+                this.reset();
+                loadSelects();
+            }
+        });
+
+        document.getElementById('locationForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const data = Object.fromEntries(new FormData(this));
+            const res = await fetch('/api/locations', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(data) });
+            if (res.ok) {
+                document.getElementById('locationSuccess').classList.add('show');
+                setTimeout(() => document.getElementById('locationSuccess').classList.remove('show'), 3000);
+                this.reset();
+                loadSelects();
+            }
+        });
+
+        document.getElementById('linkForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const data = Object.fromEntries(new FormData(this));
+            const res = await fetch(`/api/excursions/${data.excursion_id}/locations`, {
+                method: 'POST', headers: {'Content-Type':'application/json'},
+                body: JSON.stringify({ location_id: parseInt(data.location_id), order_num: parseInt(data.order_num) })
+            });
+            if (res.ok) {
+                document.getElementById('linkSuccess').classList.add('show');
+                setTimeout(() => document.getElementById('linkSuccess').classList.remove('show'), 3000);
+                this.reset();
+            }
+        });
+
+        loadSelects();
+    </script>
+</body>
+</html>

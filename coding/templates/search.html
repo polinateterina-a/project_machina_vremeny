@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Поиск — Перекрёсток эпох</title>
+    <style>
+        :root {
+            --dark: #1a1a1a;
+            --gold: #c8a96e;
+            --brown: #8b7355;
+            --blue: #3b6999;
+            --panel-bg: #f5f0e8;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: var(--dark);
+            font-family: 'Georgia', 'Times New Roman', serif;
+            color: #333;
+            min-height: 100vh;
+            animation: fadeIn 1s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .header {
+            background: var(--dark);
+            padding: 18px 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            border-bottom: 1px solid rgba(200, 169, 110, 0.2);
+        }
+
+        .header-title {
+            color: var(--gold);
+            font-size: 24px;
+            letter-spacing: 8px;
+            font-weight: normal;
+            text-transform: uppercase;
+        }
+
+        .home-link {
+            position: absolute;
+            left: 30px;
+            color: var(--gold);
+            text-decoration: none;
+            font-size: 14px;
+            letter-spacing: 2px;
+            padding: 8px 16px;
+            border: 1px solid rgba(200, 169, 110, 0.3);
+            transition: all 0.3s;
+        }
+
+        .home-link:hover {
+            border-color: var(--gold);
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 60px auto;
+            padding: 0 20px;
+        }
+
+        .search-box {
+            position: relative;
+            margin-bottom: 40px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 18px 24px;
+            font-size: 18px;
+            font-family: 'Georgia', serif;
+            letter-spacing: 2px;
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid rgba(200, 169, 110, 0.3);
+            color: var(--gold);
+            transition: all 0.3s;
+            outline: none;
+        }
+
+        .search-input::placeholder {
+            color: rgba(200, 169, 110, 0.3);
+        }
+
+        .search-input:focus {
+            border-bottom-color: var(--gold);
+        }
+
+        .search-hint {
+            color: var(--brown);
+            font-size: 12px;
+            letter-spacing: 2px;
+            margin-top: 10px;
+            text-align: center;
+            font-style: italic;
+        }
+
+        .results-section {
+            margin-bottom: 30px;
+        }
+
+        .results-label {
+            font-size: 10px;
+            letter-spacing: 4px;
+            color: var(--brown);
+            text-transform: uppercase;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .card {
+            background: var(--panel-bg);
+            border: 1px solid rgba(139, 115, 85, 0.3);
+            padding: 20px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+
+        .card:hover {
+            border-color: var(--blue);
+            transform: translateX(6px);
+            background: rgba(59, 105, 153, 0.03);
+        }
+
+        .card-icon {
+            width: 48px;
+            height: 48px;
+            border: 1px solid var(--blue);
+            color: var(--blue);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            letter-spacing: 2px;
+            flex-shrink: 0;
+        }
+
+        .card-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .card-info h3 {
+            font-size: 16px;
+            color: #333;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+            font-weight: normal;
+        }
+
+        .card-info p {
+            font-size: 12px;
+            color: var(--brown);
+            font-style: italic;
+            letter-spacing: 1px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .card-tags {
+            font-size: 10px;
+            color: var(--brown);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .excursion-card {
+            background: rgba(200, 169, 110, 0.05);
+            border: 1px solid rgba(200, 169, 110, 0.3);
+            padding: 24px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .excursion-card:hover {
+            border-color: var(--gold);
+            background: rgba(200, 169, 110, 0.1);
+        }
+
+        .excursion-card h3 {
+            font-size: 20px;
+            color: var(--gold);
+            letter-spacing: 3px;
+            font-weight: normal;
+            margin-bottom: 10px;
+        }
+
+        .excursion-card p {
+            color: var(--brown);
+            font-size: 13px;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .excursion-card .stats {
+            color: var(--brown);
+            font-size: 11px;
+            letter-spacing: 2px;
+        }
+
+        .no-results {
+            text-align: center;
+            color: var(--brown);
+            font-size: 14px;
+            letter-spacing: 2px;
+            padding: 30px;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <a href="/" class="home-link">на главную</a>
+        <span class="header-title">поиск</span>
+    </header>
+
+    <div class="container">
+        <div class="search-box">
+            <input type="text" class="search-input" id="searchInput" 
+                   placeholder="введите название или тег..." autofocus>
+            <p class="search-hint">поиск по экскурсиям, локациям и тегам</p>
+        </div>
+
+        <div id="resultsContainer">
+            <!-- Рекомендуемая экскурсия -->
+            <div class="results-section" id="recommendedSection">
+                <div class="results-label">рекомендуемая экскурсия</div>
+                <div class="excursion-card" id="recommendedExcursion">
+                    <h3>Загрузка...</h3>
+                </div>
+            </div>
+            
+            <div id="searchResultsSection" style="display:none;">
+                <div class="results-section">
+                    <div class="results-label">экскурсии</div>
+                    <div id="excursionsResults"></div>
+                </div>
+                <div class="results-section">
+                    <div class="results-label">локации</div>
+                    <div id="locationsResults"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const searchInput = document.getElementById('searchInput');
+        let searchTimeout;
+
+        // Загрузка рекомендуемой экскурсии
+        async function loadRecommended() {
+            const r = await fetch('/api/excursions');
+            const excursions = await r.json();
+            if (excursions.length > 0) {
+                const ex = excursions[0];
+                const card = document.getElementById('recommendedExcursion');
+                card.innerHTML = `
+                    <h3>${ex.name}</h3>
+                    <p>${ex.description}</p>
+                    <span class="stats">${ex.duration} &middot; ${ex.distance}</span>
+                `;
+                card.addEventListener('click', () => {
+                    window.location.href = '/excursion';
+                });
+            }
+        }
+
+        // Поиск
+        searchInput.addEventListener('input', function() {
+            clearTimeout(searchTimeout);
+            const q = this.value.trim();
+
+            if (q.length === 0) {
+                document.getElementById('recommendedSection').style.display = 'block';
+                document.getElementById('searchResultsSection').style.display = 'none';
+                return;
+            }
+
+            if (q.length < 2) return;
+
+            searchTimeout = setTimeout(async () => {
+                const r = await fetch(`/api/search?q=${encodeURIComponent(q)}`);
+                const data = await r.json();
+
+                document.getElementById('recommendedSection').style.display = 'none';
+                document.getElementById('searchResultsSection').style.display = 'block';
+
+                // Экскурсии
+                const exDiv = document.getElementById('excursionsResults');
+                if (data.excursions.length === 0) {
+                    exDiv.innerHTML = '<div class="no-results">экскурсии не найдены</div>';
+                } else {
+                    exDiv.innerHTML = '';
+                    data.excursions.forEach(ex => {
+                        const card = document.createElement('div');
+                        card.className = 'excursion-card';
+                        card.style.marginBottom = '12px';
+                        card.innerHTML = `
+                            <h3>${ex.name}</h3>
+                            <p>${ex.description}</p>
+                            <span class="stats">${ex.duration} &middot; ${ex.distance}</span>
+                        `;
+                        card.addEventListener('click', () => {
+                            window.location.href = '/excursion';
+                        });
+                        exDiv.appendChild(card);
+                    });
+                }
+
+                // Локации
+                const locDiv = document.getElementById('locationsResults');
+                if (data.locations.length === 0) {
+                    locDiv.innerHTML = '<div class="no-results">локации не найдены</div>';
+                } else {
+                    locDiv.innerHTML = '';
+                    data.locations.forEach(loc => {
+                        const card = document.createElement('div');
+                        card.className = 'card';
+                        card.innerHTML = `
+                            <div class="card-icon">&#9906;</div>
+                            <div class="card-info">
+                                <h3>${loc.name}</h3>
+                                <p>${loc.address || ''}</p>
+                                <span class="card-tags">${loc.tags}</span>
+                            </div>
+                        `;
+                        card.addEventListener('click', () => {
+                            window.location.href = '/excursion';
+                        });
+                        locDiv.appendChild(card);
+                    });
+                }
+            }, 400);
+        });
+
+        loadRecommended();
+    </script>
+</body>
+</html>
